@@ -25,31 +25,35 @@ object Repo {
 
     val in = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName), 1000000))
 
-    val bytesPerObject = 20
+    try {
 
-    var available = in.available()
-    var progress = 0L
-    val progressSet = (1L to 100L) map (p => available * p / 100) toSet
+      val bytesPerObject = 20
 
-    while (progress < available) {
+      var available = in.available()
+      var progress = 0L
+      val progressSet = (1L to 100L) map (p => available * p / 100) toSet
 
-      progress += bytesPerObject
+      while (progress < available) {
 
-      if (progressSet(progress))
-        printProgress(available, progress)
+        progress += bytesPerObject
 
-      val msisdn = in.readInt()
-      val most = in.readLong()
-      val least = in.readLong()
+        if (progressSet(progress))
+          printProgress(available, progress)
 
-      val (ndc, number) = extract(msisdn)
-      val uuid = new UUID(most, least)
+        val msisdn = in.readInt()
+        val most = in.readLong()
+        val least = in.readLong()
 
-      hashes(ndcs(ndc))(number) = uuid
-      msisdns(uuid) = msisdn
+        val (ndc, number) = extract(msisdn)
+        val uuid = new UUID(most, least)
+
+        hashes(ndcs(ndc))(number) = uuid
+        msisdns(uuid) = msisdn
+      }
+
+    } finally {
+      in.close()
     }
-
-    in.close()
   }
 
   def writeTo(fileName: String): Unit = {
@@ -72,17 +76,21 @@ object Repo {
     val uuidSet = mutable.Set[UUID]()
     val out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)))
 
-    for {
-      ndc <- ndcs.keys
-      number <- toRange(ndc)
-    } {
-      val uuid = getUniqUuid(uuidSet)
-      out.writeInt(number)
-      out.writeLong(uuid.getMostSignificantBits)
-      out.writeLong(uuid.getLeastSignificantBits)
-    }
+    try {
 
-    out.close()
+      for {
+        ndc <- ndcs.keys
+        number <- toRange(ndc)
+      } {
+        val uuid = getUniqUuid(uuidSet)
+        out.writeInt(number)
+        out.writeLong(uuid.getMostSignificantBits)
+        out.writeLong(uuid.getLeastSignificantBits)
+      }
+
+    } finally {
+      out.close()
+    }
   }
 
   def getMsisdn(hash: UUID): Int = msisdns(hash)
