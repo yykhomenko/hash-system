@@ -20,3 +20,13 @@ dependencies {
     compile 'com.typesafe.akka:akka-http_2.12:10.0.11'
     compile 'com.typesafe.akka:akka-stream_2.12:2.5.7'
 }
+
+task _createDist() {
+
+    dependsOn installDist
+
+    copy {
+        from('.') { include 'hashes.bin' }
+        into "build/install/${jar.baseName}/"
+    }
+}
