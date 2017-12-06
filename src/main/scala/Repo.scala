@@ -1,4 +1,4 @@
-import java.io._
+import java.io.{DataInputStream, _}
 import java.util.UUID
 
 import CommLineHelper._
@@ -23,37 +23,39 @@ object Repo {
 
   def readFrom(fileName: String): Unit = {
 
-    val in = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName), 1000000))
+    def withDataInputStream(fileName: String, op: DataInputStream => Unit): Unit = {
+      val in = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName), 1000000))
+      try { op(in) } finally { in.close() }
+    }
 
-    try {
+    def readRecord(in: DataInputStream): Unit = {
+      val msisdn = in.readInt()
+      val most = in.readLong()
+      val least = in.readLong()
+
+      val (ndc, number) = extract(msisdn)
+      val uuid = new UUID(most, least)
+
+      hashes(ndcs(ndc))(number) = uuid
+      msisdns(uuid) = msisdn
+    }
+
+    withDataInputStream(fileName, in => {
 
       val bytesPerObject = 20
 
       var available = in.available()
       var progress = 0L
-      val progressSet = (1L to 100L) map (p => available * p / 100) toSet
+      val progressSet = (1L to 100L) map (_ * available / 100) toSet
 
       while (progress < available) {
 
         progress += bytesPerObject
+        if (progressSet(progress)) printProgress(available, progress)
 
-        if (progressSet(progress))
-          printProgress(available, progress)
-
-        val msisdn = in.readInt()
-        val most = in.readLong()
-        val least = in.readLong()
-
-        val (ndc, number) = extract(msisdn)
-        val uuid = new UUID(most, least)
-
-        hashes(ndcs(ndc))(number) = uuid
-        msisdns(uuid) = msisdn
+        readRecord(in)
       }
-
-    } finally {
-      in.close()
-    }
+    })
   }
 
   def writeTo(fileName: String): Unit = {
@@ -73,24 +75,26 @@ object Repo {
       else getUniqUuid(uuidSet)
     }
 
+    def withDataOutputStream(fileName: String, op: DataOutputStream => Unit): Unit = {
+      val out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName), 1000000))
+      try { op(out) } finally { out.close() }
+    }
+
     val uuidSet = mutable.Set[UUID]()
-    val out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)))
 
-    try {
+    def writeRecord(number: Int, out: DataOutputStream): Unit = {
+      val uuid = getUniqUuid(uuidSet)
+      out.writeInt(number)
+      out.writeLong(uuid.getMostSignificantBits)
+      out.writeLong(uuid.getLeastSignificantBits)
+    }
 
+    withDataOutputStream(fileName, out =>
       for {
         ndc <- ndcs.keys
         number <- toRange(ndc)
-      } {
-        val uuid = getUniqUuid(uuidSet)
-        out.writeInt(number)
-        out.writeLong(uuid.getMostSignificantBits)
-        out.writeLong(uuid.getLeastSignificantBits)
-      }
-
-    } finally {
-      out.close()
-    }
+      } writeRecord(number, out)
+    )
   }
 
   def getMsisdn(hash: UUID): Int = msisdns(hash)
