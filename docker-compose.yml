@@ -1,0 +1,7 @@
+version: "3"
+services:
+  hash-system:
+    image: insidius/hash-system:latest
+    ports:
+      - "8079:8079"
+      - "8080:8080"
