@@ -1,0 +1,22 @@
+apply plugin: 'scala'
+apply plugin: 'application'
+
+jar {
+    baseName = 'hash-system'
+    version = '0.1'
+    manifest {
+        attributes("Implementation-Title": baseName,
+                "Implementation-Version": version,
+                "Built-Date": new Date())
+    }
+}
+
+mainClassName = "App"
+
+repositories { mavenCentral() }
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.4'
+    compile 'com.typesafe.akka:akka-http_2.12:10.0.11'
+    compile 'com.typesafe.akka:akka-stream_2.12:2.5.7'
+}
