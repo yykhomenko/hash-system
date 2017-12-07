@@ -12,7 +12,7 @@ object Repo {
 
   private val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
   private val msisdns = new mutable.HashMap[UUID, Int] {
-    override def initialSize = Math.round(ndcs.size * ndcNums * 1.3).toInt
+    override def initialSize = Math.round(ndcs.size * ndcNums * 1.5).toInt
   }
 
   private def extract(msisdn: Int) = {
