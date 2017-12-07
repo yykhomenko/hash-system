@@ -7,6 +7,7 @@ import scala.collection.mutable
 
 object Repo {
 
+  private val cc = 380 * 1000000000L
   private val ndcs = List(67, 68, 96, 97, 98).zipWithIndex.toMap
   private val ndcNums = 10000000
 
@@ -14,6 +15,9 @@ object Repo {
   private val msisdns = new mutable.HashMap[UUID, Int] {
     override def initialSize = Math.round(ndcs.size * ndcNums * 1.5).toInt
   }
+
+  private def toE164(msisdn: Int) = cc + msisdn
+  private def fromE164(msisdn: Long) = (msisdn - cc).toInt
 
   private def extract(msisdn: Int) = {
     val ndc = msisdn / ndcNums
@@ -97,10 +101,10 @@ object Repo {
     )
   }
 
-  def getMsisdn(hash: UUID): Int = msisdns(hash)
+  def getMsisdn(hash: UUID): Long = toE164(msisdns(hash))
 
-  def getHash(msisdn: Int): UUID = {
-    val (ndc, number) = extract(msisdn)
+  def getHash(msisdn: Long): UUID = {
+    val (ndc, number) = extract(fromE164(msisdn))
     hashes(ndcs(ndc))(number)
   }
 }
