@@ -1,7 +1,16 @@
-import CommLineHelper._
-import akka.http.scaladsl.server.{HttpApp, Route}
+import java.util.UUID
 
-object App extends HttpApp {
+import akka.http.scaladsl.model.{ContentTypes, HttpCharsets, HttpEntity, MediaTypes}
+import akka.http.scaladsl.server.{HttpApp, Route}
+import helper.CommLineHelper
+import model.{HashRepo, Responses}
+
+object App extends HttpApp with Responses with HashRepo with CommLineHelper {
+
+  // todo add ip security,
+  // todo add basic auth,
+  // todo add error answers
+  // todo add tests
 
   def main(args: Array[String]): Unit = {
 
@@ -10,13 +19,56 @@ object App extends HttpApp {
     mode match {
 
       case "generate" =>
-        withTimer("start write new hash file: " + fileName, Repo.writeTo(fileName))
+        withTimer("start write new hash file: " + fileName, writeTo(fileName))
 
       case "server" =>
-        withTimer("start read hashes file: " + fileName, Repo.readFrom(fileName))
+        withTimer("start read hashes file: " + fileName, readFrom(fileName))
         startServer("0.0.0.0", 8080)
     }
   }
 
-  override protected def routes: Route = Routes.routes()
+  override protected def routes: Route = get {
+
+    path("anonym" / "getMsisdn") {
+      extractClientIP { ip =>
+        parameters('hash) { hash =>
+          headerValueByName("Accept") { accept =>
+
+            val msisdn = getMsisdn(UUID.fromString(hash))
+
+            accept match {
+
+              case "application/json" =>
+                complete(HttpEntity(ContentTypes.`application/json`, Response(msisdn.toString, OK).toJson))
+
+              case _ =>
+                complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`),
+                  XmlMsisdnResponse(msisdn, OK).toXml))
+            }
+          }
+        }
+      }
+    } ~
+      path("anonym" / "getHash") {
+        extractClientIP { ip =>
+          parameters('msisdn.as[Long]) { msisdn =>
+
+            headerValueByName("Accept") { accept =>
+
+              val hash = getHash(msisdn)
+
+              accept match {
+
+                case "application/json" =>
+                  complete(HttpEntity(ContentTypes.`application/json`, Response(hash.toString, OK).toJson))
+
+                case _ =>
+                  complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`),
+                    XmlHashResponse(hash, OK).toXml))
+              }
+            }
+          }
+        }
+      }
+  }
 }

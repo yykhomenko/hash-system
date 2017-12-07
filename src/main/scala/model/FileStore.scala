@@ -1,28 +1,17 @@
-import java.io.{DataInputStream, _}
+package model
+
+import java.io._
 import java.util.UUID
 
-import CommLineHelper._
+import helper.CommLineHelper
 
 import scala.collection.mutable
 
-object Repo {
+trait FileStore extends E164 with CommLineHelper {
 
-  private val cc = 380 * 1000000000L
-  private val ndcs = List(67, 68, 96, 97, 98).zipWithIndex.toMap
-  private val ndcNums = 10000000
-
-  private val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
-  private val msisdns = new mutable.HashMap[UUID, Int] {
+  val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
+  val msisdns = new mutable.HashMap[UUID, Int] {
     override def initialSize = Math.round(ndcs.size * ndcNums * 1.5).toInt
-  }
-
-  private def toE164(msisdn: Int) = cc + msisdn
-  private def fromE164(msisdn: Long) = (msisdn - cc).toInt
-
-  private def extract(msisdn: Int) = {
-    val ndc = msisdn / ndcNums
-    val number = msisdn % ndcNums
-    (ndc, number)
   }
 
   def readFrom(fileName: String): Unit = {
@@ -64,12 +53,6 @@ object Repo {
 
   def writeTo(fileName: String): Unit = {
 
-    def toRange(ndc: Int) = {
-      val lo = ndc * ndcNums
-      val hi = lo + ndcNums
-      lo until hi
-    }
-
     def getUniqUuid(uuidSet: mutable.Set[UUID]): UUID = {
       val uuid = UUID.randomUUID()
       if (!uuidSet(uuid)) {
@@ -99,12 +82,5 @@ object Repo {
         number <- toRange(ndc)
       } writeRecord(number, out)
     )
-  }
-
-  def getMsisdn(hash: UUID): Long = toE164(msisdns(hash))
-
-  def getHash(msisdn: Long): UUID = {
-    val (ndc, number) = extract(fromE164(msisdn))
-    hashes(ndcs(ndc))(number)
   }
 }

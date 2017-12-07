@@ -2,15 +2,17 @@ package model
 
 import java.util.UUID
 
-trait Model {
+trait Responses {
 
   sealed abstract class Error(val errorId: Int, val errorMsg: String) // todo add error codes
   case object OK extends Error(0, "Successfull")
 
   case class Response(value: String, error: Error) {
     def toJson: String =
-      if (error.errorId == 0) s"""{"value":"$value"}"""
-      else s"""{"value":$value,"errorId":${error.errorId},"errorMsg":${error.errorMsg}}""""
+      if (error.errorId == 0)
+        s"""{"value":"$value"}"""
+      else
+        s"""{"value":$value,"errorId":${error.errorId},"errorMsg":${error.errorMsg}}""""
   }
 
   case class XmlHashResponse(hash: UUID, error: Error) {

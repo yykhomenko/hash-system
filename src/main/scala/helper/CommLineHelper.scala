@@ -1,4 +1,6 @@
-object CommLineHelper {
+package helper
+
+trait CommLineHelper {
 
   def extractArgs(args: Array[String]): (String, String) = {
     val mode = if (args.length > 0) args(0) else "server"
