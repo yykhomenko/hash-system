@@ -12,21 +12,6 @@ object App extends HttpApp with Responses with CommLineHelper {
   // todo add error answers
   // todo add tests
 
-  def main(args: Array[String]): Unit = {
-
-    val (mode, fileName) = extractArgs(args)
-
-    mode match {
-
-      case "generate" =>
-        withTimer("start write new hash file: " + fileName, HashRepo.writeTo(fileName))
-
-      case "server" =>
-        withTimer("start read hashes file: " + fileName, HashRepo.readFrom(fileName))
-        startServer("0.0.0.0", 8080)
-    }
-  }
-
   override protected def routes: Route = get {
 
     path("anonym" / "getMsisdn") {
@@ -70,5 +55,20 @@ object App extends HttpApp with Responses with CommLineHelper {
           }
         }
       }
+  }
+
+  def main(args: Array[String]): Unit = {
+
+    val (mode, fileName) = extractArgs(args)
+
+    mode match {
+
+      case "generate" =>
+        withTimer("start write new hash file: " + fileName, HashRepo.writeTo(fileName))
+
+      case "server" =>
+        withTimer("start read hashes file: " + fileName, HashRepo.readFrom(fileName))
+        startServer("0.0.0.0", 8080)
+    }
   }
 }
