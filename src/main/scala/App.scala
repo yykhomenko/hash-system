@@ -63,7 +63,7 @@ object App extends HttpApp with Responses with CommLineHelper {
 
     mode match {
 
-      case "generate" =>
+      case "generator" =>
         withTimer("start write new hash file: " + fileName, HashRepo.writeTo(fileName))
 
       case "server" =>
