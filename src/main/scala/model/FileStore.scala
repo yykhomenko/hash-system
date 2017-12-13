@@ -9,8 +9,8 @@ import scala.collection.mutable
 
 trait FileStore extends E164 with CommLineHelper {
 
-  val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
-  val msisdns = new mutable.HashMap[UUID, Int] {
+  protected val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
+  protected val msisdns = new mutable.HashMap[UUID, Int] {
     override def initialSize = Math.round(ndcs.size * ndcNums * 1.5).toInt
   }
 

@@ -1,8 +1,8 @@
-package model
-
 import java.util.UUID
 
-trait HashRepo extends FileStore {
+import model.FileStore
+
+object HashRepo extends FileStore {
 
   def getMsisdn(hash: UUID): Long = toE164(msisdns(hash))
 

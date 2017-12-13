@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.{HttpApp, Route}
 import helper.CommLineHelper
 import model.{HashRepo, Responses}
 
-object App extends HttpApp with Responses with HashRepo with CommLineHelper {
+object App extends HttpApp with Responses with CommLineHelper {
 
   // todo add ip security,
   // todo add basic auth,
@@ -19,10 +19,10 @@ object App extends HttpApp with Responses with HashRepo with CommLineHelper {
     mode match {
 
       case "generate" =>
-        withTimer("start write new hash file: " + fileName, writeTo(fileName))
+        withTimer("start write new hash file: " + fileName, HashRepo.writeTo(fileName))
 
       case "server" =>
-        withTimer("start read hashes file: " + fileName, readFrom(fileName))
+        withTimer("start read hashes file: " + fileName, HashRepo.readFrom(fileName))
         startServer("0.0.0.0", 8080)
     }
   }
@@ -34,7 +34,7 @@ object App extends HttpApp with Responses with HashRepo with CommLineHelper {
         parameters('hash) { hash =>
           headerValueByName("Accept") { accept =>
 
-            val msisdn = getMsisdn(UUID.fromString(hash))
+            val msisdn = HashRepo.getMsisdn(UUID.fromString(hash))
 
             accept match {
 
@@ -55,7 +55,7 @@ object App extends HttpApp with Responses with HashRepo with CommLineHelper {
 
             headerValueByName("Accept") { accept =>
 
-              val hash = getHash(msisdn)
+              val hash = HashRepo.getHash(msisdn)
 
               accept match {
 
