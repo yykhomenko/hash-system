@@ -1,20 +1,18 @@
-package model
+package model.store.impl
 
 import java.io._
 import java.util.UUID
 
-import helper.CommLineHelper
+import helper.CommLineHelper._
+import model.store.Store
 
 import scala.collection.mutable
 
-trait FileStore extends E164 with CommLineHelper {
+class FileStore extends Store {
 
-  protected val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
-  protected val msisdns = new mutable.HashMap[UUID, Int] {
-    override def initialSize = Math.round(ndcs.size * ndcNums * 1.5).toInt
-  }
+  val fileName = "hashes.bin"
 
-  def readFrom(fileName: String): Unit = {
+  override def storeNewHashes(): Unit = {
 
     def withDataInputStream(fileName: String, op: DataInputStream => Unit): Unit = {
       val in = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName), 1000000))
@@ -51,7 +49,7 @@ trait FileStore extends E164 with CommLineHelper {
     })
   }
 
-  def writeTo(fileName: String): Unit = {
+  override def loadHashes(): Unit = {
 
     def getUniqUuid(uuidSet: mutable.Set[UUID]): UUID = {
       val uuid = UUID.randomUUID()

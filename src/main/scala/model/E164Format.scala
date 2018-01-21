@@ -1,6 +1,6 @@
 package model
 
-trait E164 {
+trait E164Format {
 
   val cc = 380 * 1000000000L
   val ndcs = List(67, 68, 96, 97, 98).zipWithIndex.toMap
