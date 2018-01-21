@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 class FileStore extends Store {
 
-  val fileName = "hashes.bin"
+  val fileName = "hashesUUID.bin"
 
   override def storeNewHashes(): Unit = {
 
