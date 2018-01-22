@@ -1,8 +1,8 @@
-package model.store
+package system.hash.model.store
 
 import java.util.UUID
 
-import model.E164Format
+import system.hash.model.E164Format
 
 import scala.collection.mutable
 

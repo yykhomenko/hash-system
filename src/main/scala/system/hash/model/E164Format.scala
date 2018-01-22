@@ -1,4 +1,4 @@
-package model
+package system.hash.model
 
 trait E164Format {
 

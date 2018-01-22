@@ -1,7 +1,9 @@
+package system.hash
+
 import java.util.UUID
 
-import model.E164Format
-import model.store.impl.FileStore
+import system.hash.model.E164Format
+import system.hash.model.store.impl.FileStore
 
 object HashRepo extends FileStore with E164Format {
 

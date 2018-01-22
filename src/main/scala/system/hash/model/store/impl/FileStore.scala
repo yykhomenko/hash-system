@@ -1,10 +1,10 @@
-package model.store.impl
+package system.hash.model.store.impl
 
 import java.io._
 import java.util.UUID
 
-import helper.CommLineHelper._
-import model.store.Store
+import system.hash.helper.CommLineHelper._
+import system.hash.model.store.Store
 
 import scala.collection.mutable
 
@@ -12,7 +12,7 @@ class FileStore extends Store {
 
   val fileName = "hashesUUID.bin"
 
-  override def storeNewHashes(): Unit = {
+  override def loadHashes(): Unit = {
 
     def withDataInputStream(fileName: String, op: DataInputStream => Unit): Unit = {
       val in = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName), 1000000))
@@ -49,7 +49,7 @@ class FileStore extends Store {
     })
   }
 
-  override def loadHashes(): Unit = {
+  override def storeNewHashes(): Unit = {
 
     def getUniqUuid(uuidSet: mutable.Set[UUID]): UUID = {
       val uuid = UUID.randomUUID()
@@ -67,11 +67,18 @@ class FileStore extends Store {
 
     val uuidSet = mutable.Set[UUID]()
 
+    val available = ndcs.size * ndcNums
+    var progress = 0L
+    val progressSet = (1L to 100L) map (_ * available / 100) toSet
+
     def writeRecord(number: Int, out: DataOutputStream): Unit = {
       val uuid = getUniqUuid(uuidSet)
       out.writeInt(number)
       out.writeLong(uuid.getMostSignificantBits)
       out.writeLong(uuid.getLeastSignificantBits)
+
+      progress += 1
+      if (progressSet(progress)) printProgress(available, progress)
     }
 
     withDataOutputStream(fileName, out =>

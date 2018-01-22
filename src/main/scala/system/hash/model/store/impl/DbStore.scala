@@ -1,6 +1,6 @@
-package model.store.impl
+package system.hash.model.store.impl
 
-import model.store.Store
+import system.hash.model.store.Store
 
 class DbStore extends Store {
   override def storeNewHashes(): Unit = ???

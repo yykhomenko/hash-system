@@ -1,10 +1,11 @@
+package system.hash
+
 import java.util.UUID
 
 import akka.http.scaladsl.model.{ContentTypes, HttpCharsets, HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{HttpApp, Route}
-import helper.CommLineHelper._
-import model.Responses
-
+import system.hash.helper.CommLineHelper._
+import system.hash.model.Responses
 object App extends HttpApp with Responses {
 
   // todo add ip security,

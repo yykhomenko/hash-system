@@ -1,4 +1,4 @@
-package model
+package system.hash.model
 
 import java.util.UUID
 
