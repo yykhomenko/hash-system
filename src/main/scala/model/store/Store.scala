@@ -6,7 +6,7 @@ import model.E164Format
 
 import scala.collection.mutable
 
-abstract class Store extends E164Format {
+trait Store extends E164Format {
 
   val hashes = Array.ofDim[UUID](ndcs.size, ndcNums)
   val msisdns = new mutable.HashMap[UUID, Int] {
