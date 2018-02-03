@@ -1,15 +1,9 @@
-FROM insidius/alpine-oracle-jdk8-bash
+FROM cassandra:3.11.1
 
-COPY ./build/install/hash-system /hash-system
-WORKDIR /hash-system
+COPY ./data-model/*.sql /tmp/
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./cassandra-model-creator.sh /
 
-RUN chown -R daemon:daemon .
-RUN mkdir -p logs
-RUN chown -R daemon:daemon logs
-
-EXPOSE 9079 9080
-
-USER daemon
-
-ENV JAVA_OPTS "-Xms8g -Xmx10g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8079"
-CMD ["bin/hash-system"]
+# make my modified enTrypoinT execuTable
+RUN chmod a+x docker-entrypoint.sh
+RUN chmod a+x cassandra-model-creator.sh

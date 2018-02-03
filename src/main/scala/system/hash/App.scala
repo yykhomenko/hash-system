@@ -37,25 +37,30 @@ object App extends HttpApp with Responses {
     } ~
       path("anonym" / "getHash") {
         extractClientIP { ip =>
-          parameters('msisdn.as[Long]) { msisdn =>
+          parameters('msisdn) { msisdn =>
 
-            headerValueByName("Accept") { accept =>
+           // headerValueByName("Accept") { accept =>
 
-              val hash = HashRepo.getHash(msisdn)
+//              val hash = HashRepo.getHashMD5(msisdn)
+              val hash = HashRepo.getHash(msisdn.toLong)
 
-              accept match {
-
-                case "application/json" =>
-                  complete(HttpEntity(ContentTypes.`application/json`, Response(hash.toString, OK).toJson))
-
-                case _ =>
-                  complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`),
-                    XmlHashResponse(hash, OK).toXml))
-              }
-            }
+            complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), XmlHashResponse(hash.toString, OK).toXml))
           }
         }
-      }
+      } //~
+//      path("anonym" / "getHash") { // json support
+//        extractClientIP { ip =>
+//          parameters('msisdn) { msisdn =>
+//
+//            // headerValueByName("Accept") { accept =>
+//
+//            //              val hash = HashRepo.getHashMD5(msisdn)
+//            val hash = HashRepo.getHash(msisdn.toLong)
+//
+//            complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), XmlHashResponse(hash.toString, OK).toXml))
+//          }
+//        }
+//      }
   }
 
   def main(args: Array[String]): Unit = {
@@ -68,7 +73,7 @@ object App extends HttpApp with Responses {
         withTimer("start write new hash file: " + fileName, HashRepo.storeNewHashes())
 
       case "server" =>
-        withTimer("start read hashes file: " + fileName, HashRepo.loadHashes())
+       // withTimer("start read hashes file: " + fileName, HashRepo.loadHashes())
         startServer("0.0.0.0", 8080)
     }
   }

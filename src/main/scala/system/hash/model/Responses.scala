@@ -5,7 +5,7 @@ import java.util.UUID
 trait Responses {
 
   sealed abstract class Error(val errorId: Int, val errorMsg: String) // todo add error codes
-  case object OK extends Error(0, "Successfull")
+  case object OK extends Error(0, "Successful")
 
   case class Response(value: String, error: Error) {
     def toJson: String =
@@ -15,7 +15,11 @@ trait Responses {
         s"""{"value":$value,"errorId":${error.errorId},"errorMsg":${error.errorMsg}}""""
   }
 
-  case class XmlHashResponse(hash: UUID, error: Error) {
+//  case class XmlHashResponse(hash: UUID, error: Error) {
+//    def toXml: String = s"""<result><hash>$hash</hash><status errorCode="${error.errorId}">${error.errorMsg}</status></result>"""
+//  }
+
+  case class XmlHashResponse(hash: String, error: Error) {
     def toXml: String = s"""<result><hash>$hash</hash><status errorCode="${error.errorId}">${error.errorMsg}</status></result>"""
   }
 

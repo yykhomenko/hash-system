@@ -19,6 +19,12 @@ dependencies {
     compile 'org.scala-lang:scala-library:2.12.4'
     compile 'com.typesafe.akka:akka-http_2.12:10.0.11'
     compile 'com.typesafe.akka:akka-stream_2.12:2.5.7'
+    compile 'commons-codec:commons-codec:1.11'
+
+    testCompile 'org.scalatest:scalatest_2.12:3.0.4'
+    testCompile 'com.storm-enroute:scalameter-core_2.12:0.9'
+    testCompile 'io.gatling.highcharts:gatling-charts-highcharts:2.3.0'
+    testCompile 'io.gatling:gatling-test-framework:2.3.0'
 }
 
 task _createDist() {
