@@ -11,9 +11,9 @@ object CommLineHelper {
 
   def withTimer(comment: String, block: => Unit): Unit = {
     println(comment)
-    val start = System.currentTimeMillis()
+    val start = System.currentTimeMillis
     block
-    println(s"completed in ${System.currentTimeMillis() - start}ms")
+    println(s"completed in ${(System.currentTimeMillis - start) / 1000}s")
   }
 
   def printProgress(available: Int, progress: Long): Unit = {

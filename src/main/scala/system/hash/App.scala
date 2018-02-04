@@ -5,7 +5,6 @@ import akka.http.scaladsl.server.{HttpApp, Route}
 import system.hash.helper.CommLineHelper._
 import system.hash.model.Responses
 
-
 object App extends HttpApp with Responses {
 
   // todo add ip security,
