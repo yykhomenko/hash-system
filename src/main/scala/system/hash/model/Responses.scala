@@ -1,11 +1,11 @@
 package system.hash.model
 
-import java.util.UUID
-
 trait Responses {
 
   sealed abstract class Error(val errorId: Int, val errorMsg: String) // todo add error codes
-  case object OK extends Error(0, "Successful")
+  case object Ok extends Error(0, "Successful")
+  case object DataNotFound extends Error(2, "Data not found")
+  case object IncorrectMsisdn extends Error(6, "Incorrect MSISDN format")
 
   case class Response(value: String, error: Error) {
     def toJson: String =

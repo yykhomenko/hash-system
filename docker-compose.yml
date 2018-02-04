@@ -3,5 +3,5 @@ services:
   hash-system:
     image: insidius/hash-system:latest
     ports:
-      - "8079:8079"
-      - "8080:8080"
+      - "9079:8079"
+      - "9080:8080"
