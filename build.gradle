@@ -19,18 +19,12 @@ dependencies {
     compile 'org.scala-lang:scala-library:2.12.4'
     compile 'com.typesafe.akka:akka-http_2.12:10.0.11'
     compile 'com.typesafe.akka:akka-stream_2.12:2.5.7'
+
     compile 'commons-codec:commons-codec:1.11'
+
+    compile 'com.datastax.cassandra:cassandra-driver-core:3.4.0'
+    compile 'com.datastax.cassandra:cassandra-driver-mapping:3.4.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.scalatest:scalatest_2.12:3.0.5'
-}
-
-task _createDist() {
-
-    dependsOn installDist
-
-    copy {
-        from('.') { include 'hashes.bin' }
-        into "build/install/${jar.baseName}/"
-    }
 }

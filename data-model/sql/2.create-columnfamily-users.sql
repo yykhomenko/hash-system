@@ -6,4 +6,5 @@ CREATE TABLE users (
 
   login text,
   password text,
-  allowedIp set<text> );
+  allowedIp set<text>,
+  roles set<text> );

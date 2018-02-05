@@ -7,7 +7,10 @@ import org.apache.commons.codec.digest.DigestUtils
 
 case class MD5(digest: Array[Byte]) {
   override def hashCode(): Int = util.Arrays.hashCode(digest)
-  override def equals(that: scala.Any): Boolean = util.Arrays.equals(digest, that.asInstanceOf[MD5].digest)
+
+  override def equals(that: scala.Any): Boolean =
+    util.Arrays.equals(digest, that.asInstanceOf[MD5].digest)
+
   override def toString: String = Hex.encodeHexString(digest)
 }
 
