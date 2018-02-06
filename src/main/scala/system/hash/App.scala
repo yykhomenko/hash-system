@@ -11,8 +11,50 @@ import system.hash.validation.Validate
 object App extends HttpApp with BasicAuthIp with Validate with Responses {
 
   // todo add salt and algorithm as param
-  // todo add error answers
+  // todo add json support
+  // todo add logging
   // todo add tests
+
+  override def routes: Route =
+
+    get {
+
+      handleExceptions(xmlExHandler) {
+
+        path("anonym" / "getMsisdn") {
+          withBasicAuthIp { _ =>
+            parameters('hash) { hash =>
+
+              withHashValidation(hash) {
+
+                case false => XmlMsisdnResp(error = IncorrectHash).resp
+                case true =>
+                  HashRepo.getMsisdn(hash) match {
+                    case None => XmlMsisdnResp(error = DataNotFound).resp
+                    case Some(m) => XmlMsisdnResp(m.toString, Ok).resp
+                  }
+              }
+            }
+          }
+
+        } ~
+          path("anonym" / "getHash") {
+            withBasicAuthIp { _ =>
+              parameters('msisdn) { msisdn =>
+
+                withMsisdnValidation(msisdn) {
+                  case false => XmlHashResp(error = IncorrectMsisdn).resp
+                  case true => XmlHashResp(HashRepo.getHash(msisdn), Ok).resp
+                }
+              }
+            }
+          }
+      }
+    }
+
+  override def users: Map[String, User] = UsersRepo.users
+
+  override def conf: Config = ConfigFactory.load()
 
   def main(args: Array[String]): Unit = {
 
@@ -28,39 +70,4 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
         startServer("0.0.0.0", 8080)
     }
   }
-
-  override def routes: Route = get {
-
-    path("anonym" / "getMsisdn") {
-      withBasicAuthIp { _ =>
-        parameters('hash) { hash =>
-
-          withHashValidation(hash) {
-
-            case false => XmlMsisdnResp(error = IncorrectHash).resp
-            case true =>
-              HashRepo.getMsisdn(hash) match {
-                case None => XmlMsisdnResp(error = DataNotFound).resp
-                case Some(m) => XmlMsisdnResp(m.toString, Ok).resp
-              }
-          }
-        }
-      }
-
-    } ~
-      path("anonym" / "getHash") {
-        withBasicAuthIp { _ =>
-          parameters('msisdn) { msisdn =>
-
-            withMsisdnValidation(msisdn) {
-              case false => XmlHashResp(error = IncorrectMsisdn).resp
-              case true => XmlHashResp(HashRepo.getHash(msisdn), Ok).resp
-            }
-          }
-        }
-      }
-  }
-
-  override def users: Map[String, User] = UsersRepo.users
-  override def conf: Config = ConfigFactory.load()
 }

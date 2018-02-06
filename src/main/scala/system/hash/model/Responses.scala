@@ -1,8 +1,8 @@
 package system.hash.model
 
 import akka.http.scaladsl.model.{HttpCharsets, HttpEntity, MediaTypes}
-import akka.http.scaladsl.server.Route
-import system.hash.App.complete
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import system.hash.App.{complete, extractUri}
 
 trait Responses {
 
@@ -37,4 +37,12 @@ trait Responses {
   case object DataNotFound extends Error(2, "Data not found")
   case object IncorrectMsisdn extends Error(6, "Incorrect MSISDN format")
   case object IncorrectHash extends Error(6, "Incorrect HASH format")
+
+  def xmlExHandler = ExceptionHandler {
+    case t: Throwable =>
+      extractUri { uri =>
+        println(s"Request to $uri could not be handled normally, cause: $t")
+        XmlMsisdnResp(error = InternalError).resp
+      }
+  }
 }
