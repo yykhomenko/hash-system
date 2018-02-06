@@ -1,13 +1,12 @@
 package system.hash
 
-import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpCharsets, HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{HttpApp, Route}
-import system.hash.model.Responses
 import system.hash.model.dao.User
+import system.hash.model.{BasicAuth, Responses}
 import system.hash.repo.{HashRepo, UsersRepo}
 
-object App extends HttpApp with Responses {
+object App extends HttpApp with BasicAuth with Responses {
 
   // todo add ip security,
   // todo add basic auth,
@@ -21,7 +20,7 @@ object App extends HttpApp with Responses {
     mode match {
 
       case "server" =>
-        withTimer("start load hashes", HashRepo.loadHashes())
+        // withTimer("start load hashes", HashRepo.loadHashes())
 
         println(UsersRepo.users)
 
@@ -29,36 +28,22 @@ object App extends HttpApp with Responses {
     }
   }
 
-  override protected def routes: Route = get {
+  override def routes: Route = get {
 
     path("anonym" / "getMsisdn") {
-
       parameters('hash) { hash =>
-
-        extractClientIP { ip =>
-
-          authenticateBasicAsync(realm = "secure site", myUserPassAuthenticator) { user =>
-
-            val opt = Option(ip.getAddress().get()).map(ip => ip.getHostAddress).filter(ip => User.matchIp(ip, user.allowedIp))
-
-            opt match {
-              case Some(value) =>
-
-                val response = HashRepo.getMsisdn(hash) match {
-                  case 0 => XmlMsisdnResponse("0", DataNotFound)
-                  case msisdn => XmlMsisdnResponse(msisdn.toString, Ok)
-                }
-                complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), response.toString))
-
-              case None => complete((Forbidden, "ip not allowed"))
-            }
+        withAuth { (ip, user) =>
+          val response = HashRepo.getMsisdn(hash) match {
+            case 0 => XmlMsisdnResponse("0", DataNotFound)
+            case msisdn => XmlMsisdnResponse(msisdn.toString, Ok)
           }
+          complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), response.toString))
         }
       }
 
     } ~
       path("anonym" / "getHash") {
-        extractClientIP { ip =>
+        withAuth { (ip, user) =>
           parameters('msisdn) { msisdn =>
             val hash = HashRepo.getHash(msisdn)
             val response = XmlHashResponse(hash, Ok)
@@ -67,4 +52,6 @@ object App extends HttpApp with Responses {
         }
       }
   }
+
+  override def users: Map[String, User] = UsersRepo.users
 }
