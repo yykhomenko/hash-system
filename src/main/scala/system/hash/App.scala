@@ -1,15 +1,16 @@
 package system.hash
 
-import akka.http.scaladsl.model.{HttpCharsets, HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{HttpApp, Route}
+import com.typesafe.config.{Config, ConfigFactory}
+import system.hash.auth.BasicAuthIp
+import system.hash.model.Responses
 import system.hash.model.dao.User
-import system.hash.model.{BasicAuth, Responses}
 import system.hash.repo.{HashRepo, UsersRepo}
+import system.hash.validation.Validate
 
-object App extends HttpApp with BasicAuth with Responses {
+object App extends HttpApp with BasicAuthIp with Validate with Responses {
 
-  // todo add ip security,
-  // todo add basic auth,
+  // todo add salt and algorithm as param
   // todo add error answers
   // todo add tests
 
@@ -31,27 +32,35 @@ object App extends HttpApp with BasicAuth with Responses {
   override def routes: Route = get {
 
     path("anonym" / "getMsisdn") {
-      parameters('hash) { hash =>
-        withAuth { (ip, user) =>
-          val response = HashRepo.getMsisdn(hash) match {
-            case 0 => XmlMsisdnResponse("0", DataNotFound)
-            case msisdn => XmlMsisdnResponse(msisdn.toString, Ok)
+      withBasicAuthIp { _ =>
+        parameters('hash) { hash =>
+
+          withHashValidation(hash) {
+
+            case false => XmlMsisdnResp(error = IncorrectHash).resp
+            case true =>
+              HashRepo.getMsisdn(hash) match {
+                case None => XmlMsisdnResp(error = DataNotFound).resp
+                case Some(m) => XmlMsisdnResp(m.toString, Ok).resp
+              }
           }
-          complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), response.toString))
         }
       }
 
     } ~
       path("anonym" / "getHash") {
-        withAuth { (ip, user) =>
+        withBasicAuthIp { _ =>
           parameters('msisdn) { msisdn =>
-            val hash = HashRepo.getHash(msisdn)
-            val response = XmlHashResponse(hash, Ok)
-            complete(HttpEntity(MediaTypes.`application/xml`.toContentType(HttpCharsets.`UTF-8`), response.toString))
+
+            withMsisdnValidation(msisdn) {
+              case false => XmlHashResp(error = IncorrectMsisdn).resp
+              case true => XmlHashResp(HashRepo.getHash(msisdn), Ok).resp
+            }
           }
         }
       }
   }
 
   override def users: Map[String, User] = UsersRepo.users
+  override def conf: Config = ConfigFactory.load()
 }

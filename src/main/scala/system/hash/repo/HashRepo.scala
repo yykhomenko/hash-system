@@ -8,16 +8,17 @@ object HashRepo extends E164Format with Progress {
 
   val salt = "qweqeqe" // todo load from db
   private val msisdns = collection.concurrent.TrieMap[MD5, Long]()
+  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L
 
   protected def progressSize: Int = ndcs.size * ndcNums
 
-  def getMsisdn(hash: String): Long = msisdns.getOrElse(MD5(hash), 0)
+  def getMsisdn(hash: String): Option[Long] = msisdns.get(MD5(hash))
 
   def loadHashes(): Unit = {
 
     def writeHash(msisdn: Long): Unit = {
-
-      val hash = MD5(getHash(msisdn.toString))
+      val digest = getHash(msisdn.toString)
+      val hash = MD5(digest)
       assert(!msisdns.contains(hash),
         "Hashes contains duplicate! Pick up different salt!")
 

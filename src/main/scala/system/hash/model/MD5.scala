@@ -18,7 +18,7 @@ object MD5 {
   def apply(msisdn: String, salt: String): MD5 = MD5(msisdn.toLong, salt)
 
   def apply(msisdn: Long, salt: String): MD5 = {
-    val digest = DigestUtils.getSha512Digest
+    val digest = DigestUtils.getMd5Digest
     digest.update((msisdn + salt).getBytes)
     MD5(digest.digest)
   }
