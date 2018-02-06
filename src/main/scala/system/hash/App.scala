@@ -10,7 +10,7 @@ import system.hash.validation.Validate
 
 object App extends HttpApp with BasicAuthIp with Validate with Responses {
 
-  // todo add salt and algorithm as param
+  // todo add salt, algorithm, ip db, etc. to config
   // todo add json support
   // todo add logging
   // todo add tests
@@ -63,7 +63,7 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
     mode match {
 
       case "server" =>
-        // withTimer("start load hashes", HashRepo.loadHashes())
+        withTimer("start load hashes", HashRepo.loadHashes())
 
         println(UsersRepo.users)
 

@@ -21,8 +21,8 @@ trait BasicAuth {
       case _ => Future.successful(None)
     }
 
-  def withBasicAuth(op: User => Route): Route =
+  def withBasicAuth(f: User => Route): Route =
     authenticateBasicAsync(realm = "hash system", userPassAuthenticator) { user =>
-      op(user)
+      f(user)
     }
 }

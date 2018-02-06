@@ -8,13 +8,13 @@ import system.hash.App.{complete, extractClientIP}
 
 trait IpAuth {
 
-  def withIpAuth(allowedIps: util.Set[String])(op: String => Route): Route = {
+  def withIpAuth(allowedIps: util.Set[String])(f: String => Route): Route = {
     extractClientIP { remote =>
       val ip = Option(remote.getAddress().get())
         .map(address => address.getHostAddress)
         .getOrElse("127.0.0.1")
 
-      if (matchIp(ip, allowedIps)) op(ip)
+      if (matchIp(ip, allowedIps)) f(ip)
       else complete((Forbidden, s"ip not allowed: $ip"))
     }
   }

@@ -5,18 +5,18 @@ import system.hash.model.dao.User
 
 trait BasicAuthIp extends BasicAuth with IpAuth {
 
-  def withBasicAuthIp(op: (User, String) => Route): Route = {
+  def withBasicAuthIp(f: (User, String) => Route): Route = {
     withBasicAuth { user =>
       withIpAuth(user.allowedIp) { ip =>
-        op(user, ip)
+        f(user, ip)
       }
     }
   }
 
-  def withBasicAuthIp(op: Unit => Route): Route = {
+  def withBasicAuthIp(f: Unit => Route): Route = {
     withBasicAuth { user =>
       withIpAuth(user.allowedIp) { ip =>
-        op()
+        f()
       }
     }
   }
