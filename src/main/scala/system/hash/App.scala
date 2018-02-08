@@ -5,7 +5,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import system.hash.auth.BasicAuthIp
 import system.hash.model.{Responses, Validation}
 import system.hash.model.dao.User
-import system.hash.repo.{HashRepo, UsersRepo}
+import system.hash.repo.{HashRepo, DbRepo}
 
 object App extends HttpApp with BasicAuthIp with Validation with Responses {
 
@@ -51,9 +51,8 @@ object App extends HttpApp with BasicAuthIp with Validation with Responses {
       }
     }
 
-  override def users: Map[String, User] = UsersRepo.users
-
-  override def conf: Config = ConfigFactory.load().getConfig("system")
+  override def config: Config = ConfigFactory.parseMap(DbRepo.configs)
+  override def users: Map[String, User] = DbRepo.users
 
   def main(args: Array[String]): Unit = {
 
