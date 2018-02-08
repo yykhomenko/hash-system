@@ -8,7 +8,7 @@ object HashRepo extends E164Format with Progress {
 
   val salt = "qweqeqe" // todo load from db
   private val msisdns = collection.concurrent.TrieMap[MD5, Long]()
-  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L
+//  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L
 
   protected def progressSize: Int = ndcs.size * ndcNums
 

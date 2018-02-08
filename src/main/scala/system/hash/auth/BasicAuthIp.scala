@@ -13,10 +13,10 @@ trait BasicAuthIp extends BasicAuth with IpAuth {
     }
   }
 
-  def withBasicAuthIp(f: Unit => Route): Route = {
+  def withBasicAuthIp(f: => Route): Route = {
     withBasicAuth { user =>
       withIpAuth(user.allowedIp) { ip =>
-        f()
+        f
       }
     }
   }

@@ -3,12 +3,11 @@ package system.hash
 import akka.http.scaladsl.server.{HttpApp, Route}
 import com.typesafe.config.{Config, ConfigFactory}
 import system.hash.auth.BasicAuthIp
-import system.hash.model.Responses
+import system.hash.model.{Responses, Validation}
 import system.hash.model.dao.User
 import system.hash.repo.{HashRepo, UsersRepo}
-import system.hash.validation.Validate
 
-object App extends HttpApp with BasicAuthIp with Validate with Responses {
+object App extends HttpApp with BasicAuthIp with Validation with Responses {
 
   // todo add salt, algorithm, ip db, etc. to config
   // todo add json support
@@ -22,7 +21,7 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
       handleExceptions(xmlExHandler) {
 
         path("anonym" / "getMsisdn") {
-          withBasicAuthIp { _ =>
+          withBasicAuthIp {
             parameters('hash) { hash =>
 
               withHashValidation(hash) {
@@ -39,7 +38,7 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
 
         } ~
           path("anonym" / "getHash") {
-            withBasicAuthIp { _ =>
+            withBasicAuthIp {
               parameters('msisdn) { msisdn =>
 
                 withMsisdnValidation(msisdn) {
@@ -54,7 +53,7 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
 
   override def users: Map[String, User] = UsersRepo.users
 
-  override def conf: Config = ConfigFactory.load()
+  override def conf: Config = ConfigFactory.load().getConfig("system")
 
   def main(args: Array[String]): Unit = {
 
@@ -63,10 +62,7 @@ object App extends HttpApp with BasicAuthIp with Validate with Responses {
     mode match {
 
       case "server" =>
-        withTimer("start load hashes", HashRepo.loadHashes())
-
-        println(UsersRepo.users)
-
+       // withTimer("start load hashes", HashRepo.loadHashes())
         startServer("0.0.0.0", 8080)
     }
   }
