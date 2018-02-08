@@ -22,6 +22,6 @@ object DbRepo {
   private val configAccessor = new MappingManager(session).createAccessor(classOf[ConfigAccessor])
   private val userAccessor = new MappingManager(session).createAccessor(classOf[UserAccessor])
 
-  val configs = configAccessor.getAll.all.asScala.map(config => (config.key, config.value)).toMap.asJava
+  val config = ConfigFactory.parseMap(configAccessor.getAll.all.asScala.map(config => (config.key, config.value)).toMap.asJava)
   val users = userAccessor.getAll.all.asScala.map(user => (user.login, user)).toMap
 }

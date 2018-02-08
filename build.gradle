@@ -26,6 +26,9 @@ dependencies {
     compile 'com.datastax.cassandra:cassandra-driver-mapping:3.4.0'
 
     compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile group: 'com.typesafe.scala-logging', name: 'scala-logging_2.12', version: '3.7.2'
+
+
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.scalatest:scalatest_2.12:3.0.5'

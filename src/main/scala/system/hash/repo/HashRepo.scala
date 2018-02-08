@@ -1,12 +1,17 @@
 package system.hash.repo
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.codec.binary.Hex
-import org.apache.commons.codec.digest.DigestUtils
+import org.apache.commons.codec.digest.{DigestUtils, MessageDigestAlgorithms}
 import system.hash.model.{E164Format, MD5, Progress}
 
-object HashRepo extends E164Format with Progress {
+object HashRepo extends E164Format with Progress with LazyLogging {
 
-  val salt = "qweqeqe" // todo load from db
+  private val algorithm = DbRepo.config.getString("algorithm")
+  private val salt = DbRepo.config.getString("salt")
+
+  logger.info(s"used algorithm: $algorithm, also available: ${MessageDigestAlgorithms.values()}")
+
   private val msisdns = collection.concurrent.TrieMap[MD5, Long]()
 //  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L
 
@@ -33,7 +38,7 @@ object HashRepo extends E164Format with Progress {
   }
 
   def getHash(msisdn: String): String = {
-    val digest = DigestUtils.getMd5Digest
+    val digest = DigestUtils.getDigest(algorithm)
     digest.update((msisdn + salt).getBytes)
     Hex.encodeHexString(digest.digest)
   }
