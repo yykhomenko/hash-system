@@ -42,6 +42,7 @@ trait Responses {
     case t: Throwable =>
       extractUri { uri =>
         println(s"Request to $uri could not be handled normally, cause: $t")
+        t.printStackTrace()
         XmlMsisdnResp(error = InternalError).resp
       }
   }

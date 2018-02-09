@@ -11,6 +11,8 @@ lazy val root = (project in file("."))
 
     name := "hash-system",
 
+    mainClass := Some("system.hash.App"),
+
     libraryDependencies ++= Seq(
 
       "com.typesafe.akka" %% "akka-http" % "10.0.11",
@@ -24,5 +26,9 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.3",
 
       "junit" % "junit" % "4.12" % Test,
-      "org.scalatest" %% "scalatest" % "3.0.5" % Test)
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test)
   )
+
+//mainClass in (Compile, run) := Some("system.hash.App")
+//mainClass in (Compile, packageBin) := Some("system.hash.App")

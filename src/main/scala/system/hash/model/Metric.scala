@@ -2,7 +2,9 @@ package system.hash.model
 
 import java.util.concurrent.atomic.AtomicInteger
 
-trait Progress {
+trait Metric {
+
+  protected def progressSize: Int
 
   private val progressCounter = new AtomicInteger(0)
   private val progressSet = (1L to 100L) map (_ * progressSize / 100) toSet
@@ -16,6 +18,11 @@ trait Progress {
     val persent = Math.round(progress * 100 / available)
     print(s"\r$persent% ")
   }
-
-  protected def progressSize: Int
+  
+  def withTimer(comment: String, block: => Unit): Unit = {
+    println(comment)
+    val start = System.currentTimeMillis
+    block
+    println(s"completed in ${(System.currentTimeMillis - start) / 1000}s")
+  }
 }

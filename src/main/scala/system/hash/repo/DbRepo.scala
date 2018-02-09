@@ -7,7 +7,7 @@ import system.hash.model.dao.{ConfigAccessor, UserAccessor}
 
 import scala.collection.JavaConverters._
 
-object DbRepo {
+trait DbRepo {
 
   private val contactPoints = ConfigFactory.load().getStringList("db.contact-points").asScala
   private val port = ConfigFactory.load().getInt("db.port")

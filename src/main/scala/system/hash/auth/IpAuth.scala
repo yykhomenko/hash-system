@@ -1,7 +1,9 @@
 package system.hash.auth
 
+import java.net.InetAddress
 import java.util
 
+import akka.http.scaladsl.model.RemoteAddress.IP
 import akka.http.scaladsl.model.StatusCodes.Forbidden
 import akka.http.scaladsl.server.Route
 import system.hash.App.{complete, extractClientIP}
@@ -10,9 +12,7 @@ trait IpAuth {
 
   def withIpAuth(allowedIps: util.Set[String])(f: String => Route): Route = {
     extractClientIP { remote =>
-      val ip = Option(remote.getAddress().get())
-        .map(address => address.getHostAddress)
-        .getOrElse("127.0.0.1")
+      val ip = remote.toIP.getOrElse(IP(InetAddress.getByName("127.0.0.1"))).ip.getHostAddress
 
       if (matchIp(ip, allowedIps)) f(ip)
       else complete((Forbidden, s"ip not allowed: $ip"))

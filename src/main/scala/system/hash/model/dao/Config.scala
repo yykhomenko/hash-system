@@ -1,8 +1,5 @@
 package system.hash.model.dao
 
-import java.util
-import java.util.UUID
-
 import com.datastax.driver.mapping.Result
 import com.datastax.driver.mapping.annotations.{Accessor, PartitionKey, Query, Table}
 
