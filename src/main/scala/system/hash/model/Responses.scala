@@ -13,7 +13,7 @@ trait Responses {
     def resp: Route = complete(HttpEntity(applicationXml, body))
   }
 
-  case class JsonResp(value: String = "", error: Error) extends Resp {
+  case class JsonResp(value: String = "", error: Error = Ok) extends Resp {
     def body: String =
       if (error.errorId == 0)
         s"""{"value":"$value"}"""
@@ -21,12 +21,12 @@ trait Responses {
         s"""{"value":$value,"errorId":${error.errorId},"errorMsg":${error.errorMsg}}""""
   }
 
-  case class XmlHashResp(value: String = "", error: Error) extends Resp {
+  case class XmlHashResp(value: String = "", error: Error = Ok) extends Resp {
     def body: String =
       s"""<result><hash>$value</hash><status errorCode="${error.errorId}">${error.errorMsg}</status></result>"""
   }
 
-  case class XmlMsisdnResp(value: String = "", error: Error) extends Resp {
+  case class XmlMsisdnResp(value: String = "", error: Error = Ok) extends Resp {
     def body: String =
       s"""<result><msisdn>$value</msisdn><status errorCode="${error.errorId}">${error.errorMsg}</status></result>"""
   }

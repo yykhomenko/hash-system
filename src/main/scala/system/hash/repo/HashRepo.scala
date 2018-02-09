@@ -10,16 +10,15 @@ trait HashRepo extends DbRepo with E164Format with Metric with LazyLogging {
   private val algorithm = config.getString("algorithm")
   private val salt = config.getString("salt")
 
-  logger.info(s"used algorithm: $algorithm, supports: ${MessageDigestAlgorithms.values()}")
-
-  private val msisdns = collection.concurrent.TrieMap[MD5, Long]()
-//  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L
+  protected val msisdns = collection.concurrent.TrieMap[MD5, Long]()
 
   protected def progressSize: Int = ndcs.size * ndcNums
 
   def getMsisdn(hash: String): Option[Long] = msisdns.get(MD5(hash))
 
   def loadHashes(): Unit = {
+
+    logger.info(s"used algorithm: $algorithm, supports: ${MessageDigestAlgorithms.values()}")
 
     def writeHash(msisdn: Long): Unit = {
       val digest = getHash(msisdn.toString)
