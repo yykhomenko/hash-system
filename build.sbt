@@ -29,6 +29,3 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test)
   )
-
-//mainClass in (Compile, run) := Some("system.hash.App")
-//mainClass in (Compile, packageBin) := Some("system.hash.App")
