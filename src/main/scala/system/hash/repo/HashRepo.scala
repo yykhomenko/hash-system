@@ -10,7 +10,7 @@ object HashRepo extends E164Format with Progress with LazyLogging {
   private val algorithm = DbRepo.config.getString("algorithm")
   private val salt = DbRepo.config.getString("salt")
 
-  logger.info(s"used algorithm: $algorithm, also available: ${MessageDigestAlgorithms.values()}")
+  logger.info(s"used algorithm: $algorithm, supports: ${MessageDigestAlgorithms.values()}")
 
   private val msisdns = collection.concurrent.TrieMap[MD5, Long]()
 //  msisdns(MD5("55c201c6760f2cbc78e674e2f66e453f")) = 380672244089L

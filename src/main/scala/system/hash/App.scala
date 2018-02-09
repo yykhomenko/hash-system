@@ -55,14 +55,8 @@ object App extends HttpApp with BasicAuthIp with Validation with Responses {
 
   def main(args: Array[String]): Unit = {
 
-    val (mode, fileName) = extractArgs(args)
-
-    mode match {
-
-      case "server" =>
-       // withTimer("start load hashes", HashRepo.loadHashes())
-        HashRepo
-        startServer("0.0.0.0", 8080)
-    }
+    // withTimer("start load hashes", HashRepo.loadHashes())
+    HashRepo
+    startServer("0.0.0.0", 8080)
   }
 }
