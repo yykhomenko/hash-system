@@ -6,7 +6,7 @@ import system.hash.route.Routes
 object App extends HttpApp with Routes {
 
   def main(args: Array[String]): Unit = {
-    //withTimer("start load hashes", loadHashes())
+    withTimer("start load hashes", loadHashes())
     startServer("0.0.0.0", 8080)
   }
 }
