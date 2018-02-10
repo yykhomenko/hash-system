@@ -1,14 +1,12 @@
 package system.hash
 
-import akka.http.scaladsl.server.{HttpApp, Route}
-import system.hash.route.UserRoutes
+import akka.http.scaladsl.server.HttpApp
+import system.hash.route.Routes
 
-object App extends HttpApp with UserRoutes {
-
-  override def routes: Route = userRoutes
+object App extends HttpApp with Routes {
 
   def main(args: Array[String]): Unit = {
-    withTimer("start load hashes", loadHashes())
+    //withTimer("start load hashes", loadHashes())
     startServer("0.0.0.0", 8080)
   }
 }

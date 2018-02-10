@@ -16,6 +16,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
 
       "com.typesafe.akka" %% "akka-http" % "10.0.11",
+      "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.11",
 
       "commons-codec" % "commons-codec" % "1.11",
 

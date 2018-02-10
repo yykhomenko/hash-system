@@ -1,20 +1,20 @@
 package system.hash.route
 
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import com.typesafe.scalalogging.LazyLogging
 import system.hash.auth.BasicAuthIp
 import system.hash.model.{Responses, Validation}
 import system.hash.repo.HashRepo
 
-trait UserRoutes extends HashRepo with BasicAuthIp with Validation with Responses {
+trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses with LazyLogging {
 
-  def userRoutes: Route =
+  def xmlRoutes: Route = handleExceptions(xmlExHandler) {
 
     get {
 
-      handleExceptions(xmlExHandler) {
+      pathPrefix("anonym") {
 
-        path("anonym" / "getMsisdn") {
+        path("getMsisdn") {
           withBasicAuthIp {
             parameters('hash) { hash =>
 
@@ -31,7 +31,7 @@ trait UserRoutes extends HashRepo with BasicAuthIp with Validation with Response
           }
 
         } ~
-          path("anonym" / "getHash") {
+          path("getHash") {
             withBasicAuthIp {
               parameters('msisdn) { msisdn =>
 
@@ -44,4 +44,13 @@ trait UserRoutes extends HashRepo with BasicAuthIp with Validation with Response
           }
       }
     }
+  }
+
+  private def xmlExHandler = ExceptionHandler {
+    case t: Throwable =>
+      extractUri { uri =>
+        logger.error(s"Request to $uri could not be handled normally", t)
+        XmlMsisdnResp(error = InternalError).resp
+      }
+  }
 }
