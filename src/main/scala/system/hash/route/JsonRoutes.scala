@@ -16,11 +16,11 @@ trait JsonRoutes extends HashRepo with BasicAuthIp with Validation with Response
 
           withHashValidation(hash) {
 
-            case false => XmlMsisdnResp(error = IncorrectHash).resp
+            case false => JsonResp(error = IncorrectHash).resp
             case true =>
               getMsisdn(hash) match {
-                case None => XmlMsisdnResp(error = DataNotFound).resp
-                case Some(m) => XmlMsisdnResp(m.toString, Ok).resp
+                case None => JsonResp(error = DataNotFound).resp
+                case Some(m) => JsonResp(m.toString, Ok).resp
               }
           }
         }

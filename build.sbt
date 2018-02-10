@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
 
     mainClass := Some("system.hash.App"),
 
+    parallelExecution in ThisBuild := false,
+
     libraryDependencies ++= Seq(
 
       "com.typesafe.akka" %% "akka-http" % "10.0.11",

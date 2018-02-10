@@ -1,21 +1,26 @@
 package system.hash
 
-import akka.http.scaladsl.model.headers.BasicHttpCredentials
+import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpChallenge}
 import system.hash.model.MD5
 import system.hash.route.Routes
 
 trait Config extends Routes {
 
+  val responseWWWAuthHeader = HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
+  val requiresAuth = "The resource requires authentication, which was not supplied with the request"
+  val invalidAuth = "The supplied authentication is invalid"
+
+  val emptyCredentials = BasicHttpCredentials("", "")
   val invalidCredentials = BasicHttpCredentials("Peter", "pan")
   val validCredentials = BasicHttpCredentials("test-client", "test-client-password")
 
   val msisdn = 380672240000L
-  val incorrectMsisdn1 = 38067224L
-  val incorrectMsisdn2 = "38067224qweqw"
+  val msisdnTooShort = 38067224L
+  val msisdnAlphaName = "38067224qweqw"
 
-  val hashMD5 = "8801ddf0a8ef82313293d7cf3ab5d46c"
-  val incorrectHashMD5 = "9801ddf0a8ef82313293d7cf3ab5d46ce"
-  val absentHashMD5 = "0001ddf0a8ef82313293d7cf3ab5d65f"
+  val hash = "8801ddf0a8ef82313293d7cf3ab5d46c"
+  val incorrectHash = "9801ddf0a8ef82313293d7cf3ab5d46ce"
+  val absentHash = "4501ddf0a8ef82313293d7cf3ab5d434"
 
-  msisdns(MD5(hashMD5)) = msisdn
+  msisdns(MD5(hash)) = msisdn
 }

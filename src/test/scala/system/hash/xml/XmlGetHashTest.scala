@@ -1,7 +1,7 @@
 package system.hash.xml
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.headers.{HttpChallenge, `WWW-Authenticate`}
+import akka.http.scaladsl.model.headers.`WWW-Authenticate`
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{Matchers, WordSpec}
@@ -10,55 +10,78 @@ import system.hash.route.Routes
 
 class XmlGetHashTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
 
-  val hashUri = s"/anonym/getHash?msisdn=$msisdn"
-  val incorrectHashUri1 = s"/anonym/getHash?msisdn=$incorrectMsisdn1"
-  val incorrectHashUri2 = s"/anonym/getHash?msisdn=$incorrectMsisdn2"
+  val method = "/anonym/getHash"
+  val uri = s"$method?msisdn=$msisdn"
+  val shortMsisdnUri = s"$method?msisdn=$msisdnTooShort"
+  val alphaNameMsisdnUri = s"$method?msisdn=$msisdnAlphaName"
 
-  "The hash system with XML protocol getHash method" should {
+  s"The hash system with XML method $method" should {
 
-    s"return Unauthorized error for GET requests to $hashUri without credentials" in {
+    s"1. Return Unauthorized error for GET requests to $uri without credentials" in {
 
-      Get(hashUri) ~> Route.seal(routes) ~> check {
+      Get(uri) ~>
+        Route.seal(routes) ~> check {
+
         status shouldEqual StatusCodes.Unauthorized
-        responseAs[String] shouldEqual "The resource requires authentication, which was not supplied with the request"
-        header[`WWW-Authenticate`].get.challenges.head shouldEqual HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
+        responseAs[String] shouldEqual requiresAuth
+        header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
       }
     }
 
-    s"return Unauthorized error for GET requests to $hashUri without invalid credentials" in {
+    s"2. Return Unauthorized error for GET requests to $uri with empty credentials" in {
 
-      Get(hashUri) ~> addCredentials(invalidCredentials) ~>
+      Get(uri) ~>
+        addCredentials(invalidCredentials) ~>
         Route.seal(routes) ~> check {
+
         status shouldEqual StatusCodes.Unauthorized
-        responseAs[String] shouldEqual "The supplied authentication is invalid"
-        header[`WWW-Authenticate`].get.challenges.head shouldEqual HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
+        responseAs[String] shouldEqual invalidAuth
+        header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
       }
     }
 
-    s"return OK code with right error body for GET requests to $incorrectHashUri1 with valid credentials" in {
+    s"3. Return Unauthorized error for GET requests to $uri with invalid credentials" in {
 
-      Get(incorrectHashUri1) ~> addCredentials(validCredentials) ~>
+      Get(uri) ~>
+        addCredentials(invalidCredentials) ~>
         Route.seal(routes) ~> check {
+
+        status shouldEqual StatusCodes.Unauthorized
+        responseAs[String] shouldEqual invalidAuth
+        header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
+      }
+    }
+
+    s"4. Return OK code with right error body for GET requests to $shortMsisdnUri with valid credentials" in {
+
+      Get(shortMsisdnUri) ~>
+        addCredentials(validCredentials) ~>
+        Route.seal(routes) ~> check {
+
         status shouldEqual StatusCodes.OK
         responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
       }
     }
 
-    s"return OK code with right error body for GET requests to $incorrectHashUri2 with valid credentials" in {
+    s"5. Return OK code with right error body for GET requests to $alphaNameMsisdnUri with valid credentials" in {
 
-      Get(incorrectHashUri2) ~> addCredentials(validCredentials) ~>
+      Get(alphaNameMsisdnUri) ~>
+        addCredentials(validCredentials) ~>
         Route.seal(routes) ~> check {
+
         status shouldEqual StatusCodes.OK
         responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
       }
     }
 
-    s"return OK code with right body for GET requests to $hashUri with valid credentials" in {
+    s"6. Return OK code with right body for GET requests to $uri with valid credentials" in {
 
-      Get(hashUri) ~> addCredentials(validCredentials) ~>
+      Get(uri) ~>
+        addCredentials(validCredentials) ~>
         Route.seal(routes) ~> check {
+
         status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlHashResp(hashMD5).body
+        responseAs[String] shouldEqual XmlHashResp(hash).body
       }
     }
   }

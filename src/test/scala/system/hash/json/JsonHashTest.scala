@@ -1,4 +1,4 @@
-package system.hash.xml
+package system.hash.json
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.`WWW-Authenticate`
@@ -8,14 +8,14 @@ import org.scalatest.{Matchers, WordSpec}
 import system.hash.Config
 import system.hash.route.Routes
 
-class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
+class JsonHashTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
 
-  val method = "/anonym/getMsisdn"
-  val uri = s"$method?hash=$hash"
-  val incorrectHashUri = s"$method?hash=$incorrectHash"
-  val absentHashUri = s"$method?hash=$absentHash"
+  val resource = "/api/hash"
+  val uri = s"$resource/$msisdn"
+  val shortMsisdnUri = s"$resource/$msisdnTooShort"
+  val alphaNameMsisdnUri = s"$resource/$msisdnAlphaName"
 
-  s"The hash system with XML method $method" should {
+  s"The hash system with REST resource $resource" should {
 
     s"1. Return Unauthorized error for GET requests to $uri without credentials" in {
 
@@ -52,25 +52,24 @@ class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest wi
       }
     }
 
-    s"4. Return OK code with right error body for GET requests to $incorrectHashUri with valid credentials" in {
+    s"4. Return BadRequest error with right error body for GET requests to $shortMsisdnUri with valid credentials" in {
 
-      Get(incorrectHashUri) ~>
-        addCredentials(validCredentials) ~>
+      Get(shortMsisdnUri) ~> addCredentials(validCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlMsisdnResp(error = IncorrectHash).body
+        status shouldEqual StatusCodes.BadRequest
+        responseAs[String] shouldEqual JsonResp(error = IncorrectMsisdn).body
       }
     }
 
-    s"5. Return OK code with right error body for GET requests to $absentHashUri with valid credentials" in {
+    s"5. Return BadRequest error with right error body for GET requests to $alphaNameMsisdnUri with valid credentials" in {
 
-      Get(absentHashUri) ~>
+      Get(alphaNameMsisdnUri) ~>
         addCredentials(validCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlMsisdnResp(error = DataNotFound).body
+        status shouldEqual StatusCodes.BadRequest
+        responseAs[String] shouldEqual JsonResp(error = IncorrectMsisdn).body
       }
     }
 
@@ -81,7 +80,7 @@ class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest wi
         Route.seal(routes) ~> check {
 
         status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlMsisdnResp(msisdn.toString).body
+        responseAs[String] shouldEqual JsonResp(hash).body
       }
     }
   }
