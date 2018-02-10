@@ -13,6 +13,7 @@ object App extends HttpApp with UserRoutes {
   }
 }
 
+// todo add DB credentials support
 // todo add test containers for cassandra
 // todo add json support
 // todo add logging with logstash console

@@ -5,13 +5,11 @@ INSERT INTO users JSON '{
  "login": "test-client",
  "password": "test-client-password",
  "allowedIp": ["127.0.0.1","10.44.*.*","10.49.*.*","192.168.*.*"],
- "roles": ["client"]
-}';
+ "roles": ["client"]}';
 
 INSERT INTO users JSON '{
  "id": "9bed4bc3-98ee-4885-bb1f-087117016e10",
  "login": "reload-admin",
  "password": "reload-admin-password",
  "allowedIp": ["127.0.0.1","10.44.*.*","10.49.*.*","192.168.*.*"],
- "roles": ["reload"]
-}';
+ "roles": ["reload"]}';

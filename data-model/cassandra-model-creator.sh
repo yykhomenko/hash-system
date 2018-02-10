@@ -1,9 +1,11 @@
 #!/bin/bash
-for f in /tmp/*.sql;
+for file in /tmp/*.sql;
  do
-  case "$f" in
-   *.sql)
-    echo "$0: running $f" && until cqlsh -f "$f"; do >&2 echo "Cassandra is unavailable - sleeping"; sleep 2; done & ;;
-  esac
-   echo
-done
+   echo "$0: $file: running..." &&
+   until cqlsh -C -f "$file";
+     do
+       echo "$0: $file: waiting for DB startup..."; sleep 10;
+     done &&
+   echo "$0: $file: done"
+ done &&
+ echo "$0: completed" &
