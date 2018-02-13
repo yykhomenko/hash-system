@@ -6,6 +6,8 @@ import system.hash.route.Routes
 
 trait Config extends Routes {
 
+  override def metric = ???
+
   val responseWWWAuthHeader = HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
   val requiresAuth = "The resource requires authentication, which was not supplied with the request"
   val invalidAuth = "The supplied authentication is invalid"

@@ -1,12 +1,16 @@
 package system.hash.route
 
+import akka.actor.ActorRef
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import com.typesafe.scalalogging.LazyLogging
+import system.hash.actor.MetricController.{IncXmlHashOk, IncXmlMsisdnOk}
 import system.hash.auth.BasicAuthIp
 import system.hash.model.{Responses, Validation}
 import system.hash.repo.HashRepo
 
 trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses with LazyLogging {
+
+  def metric: ActorRef
 
   def xmlRoutes: Route = handleExceptions(xmlExHandler) {
 
@@ -24,7 +28,9 @@ trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses
                 case true =>
                   getMsisdn(hash) match {
                     case None => XmlMsisdnResp(error = DataNotFound).resp
-                    case Some(m) => XmlMsisdnResp(m.toString, Ok).resp
+                    case Some(m) =>
+                      metric ! IncXmlMsisdnOk
+                      XmlMsisdnResp(m.toString, Ok).resp
                   }
               }
             }
@@ -36,8 +42,11 @@ trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses
               parameters('msisdn) { msisdn =>
 
                 withMsisdnValidation(msisdn) {
-                  case false => XmlHashResp(error = IncorrectMsisdn).resp
-                  case true => XmlHashResp(getHash(msisdn), Ok).resp
+                  case false =>
+                    XmlHashResp(error = IncorrectMsisdn).resp
+                  case true =>
+                    metric ! IncXmlHashOk
+                    XmlHashResp(getHash(msisdn), Ok).resp
                 }
               }
             }
