@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import com.typesafe.scalalogging.LazyLogging
 
-trait Metric extends LazyLogging {
+trait ConsoleMetric extends LazyLogging {
 
   protected def progressSize: Int
 

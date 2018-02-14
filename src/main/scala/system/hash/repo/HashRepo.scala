@@ -3,9 +3,9 @@ package system.hash.repo
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.{DigestUtils, MessageDigestAlgorithms}
-import system.hash.model.{E164Format, MD5, Metric}
+import system.hash.model.{E164Format, MD5, ConsoleMetric}
 
-trait HashRepo extends DbRepo with E164Format with Metric with LazyLogging {
+trait HashRepo extends DbRepo with E164Format with ConsoleMetric with LazyLogging {
 
   private val algorithm = config.getString("algorithm")
   private val salt = config.getString("salt")
