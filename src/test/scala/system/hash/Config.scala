@@ -1,15 +1,15 @@
 package system.hash
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpChallenge}
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import org.scalatest.{Matchers, WordSpec}
 import system.hash.actor.MetricController
 import system.hash.model.MD5
 import system.hash.route.Routes
 
-trait Config extends Routes {
+trait Config extends WordSpec with Matchers with ScalatestRouteTest with Routes {
 
-  val testSystem = ActorSystem("test-hash-system")
-  val metric = testSystem.actorOf(MetricController.props, "metric-controller")
+  val metric = system.actorOf(MetricController.props, "metric-controller")
 
   val responseWWWAuthHeader = HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
   val requiresAuth = "The resource requires authentication, which was not supplied with the request"

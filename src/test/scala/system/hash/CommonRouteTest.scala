@@ -2,11 +2,8 @@ package system.hash
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.testkit.ScalatestRouteTest
-import org.scalatest.{Matchers, WordSpec}
-import system.hash.route.Routes
 
-class CommonRouteTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
+class CommonRouteTest extends Config {
 
   "The hash system with http protocol" should {
 

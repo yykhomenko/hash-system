@@ -3,13 +3,10 @@ package system.hash.json
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.`WWW-Authenticate`
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.testkit.ScalatestRouteTest
-import org.scalatest.{Matchers, WordSpec}
 import system.hash.Config
 import system.hash.model.IncorrectHash
-import system.hash.route.Routes
 
-class JsonMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
+class JsonMsisdnTest extends Config {
 
   val resource = "/api/msisdn"
   val uri = s"$resource/$hash"
