@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{Matchers, WordSpec}
 import system.hash.Config
+import system.hash.model.IncorrectMsisdn
 import system.hash.route.Routes
 
 class XmlGetHashTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
@@ -52,32 +53,43 @@ class XmlGetHashTest extends WordSpec with Matchers with ScalatestRouteTest with
       }
     }
 
-    s"4. Return OK code with right error body for GET requests to $shortMsisdnUri with valid credentials" in {
-
-      Get(shortMsisdnUri) ~>
-        addCredentials(validCredentials) ~>
-        Route.seal(routes) ~> check {
-
-        status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
-      }
-    }
-
-    s"5. Return OK code with right error body for GET requests to $alphaNameMsisdnUri with valid credentials" in {
-
-      Get(alphaNameMsisdnUri) ~>
-        addCredentials(validCredentials) ~>
-        Route.seal(routes) ~> check {
-
-        status shouldEqual StatusCodes.OK
-        responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
-      }
-    }
-
-    s"6. Return OK code with right body for GET requests to $uri with valid credentials" in {
+    s"4. Return Forbidden error with right error body for GET requests to $uri with other role credentials" in {
 
       Get(uri) ~>
-        addCredentials(validCredentials) ~>
+        addCredentials(validMetricCredentials) ~>
+        Route.seal(routes) ~> check {
+
+        status shouldEqual StatusCodes.Forbidden
+        responseAs[String] shouldEqual invalidRole + ClientRole.role
+      }
+    }
+
+    s"5. Return OK code with right error body for GET requests to $shortMsisdnUri with valid credentials" in {
+
+      Get(shortMsisdnUri) ~>
+        addCredentials(validClientCredentials) ~>
+        Route.seal(routes) ~> check {
+
+        status shouldEqual StatusCodes.OK
+        responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
+      }
+    }
+
+    s"6. Return OK code with right error body for GET requests to $alphaNameMsisdnUri with valid credentials" in {
+
+      Get(alphaNameMsisdnUri) ~>
+        addCredentials(validClientCredentials) ~>
+        Route.seal(routes) ~> check {
+
+        status shouldEqual StatusCodes.OK
+        responseAs[String] shouldEqual XmlHashResp(error = IncorrectMsisdn).body
+      }
+    }
+
+    s"7. Return OK code with right body for GET requests to $uri with valid credentials" in {
+
+      Get(uri) ~>
+        addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
         status shouldEqual StatusCodes.OK

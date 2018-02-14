@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{Matchers, WordSpec}
 import system.hash.Config
+import system.hash.model.{DataNotFound, IncorrectHash}
 import system.hash.route.Routes
 
 class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest with Routes with Config {
@@ -52,10 +53,21 @@ class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest wi
       }
     }
 
-    s"4. Return OK code with right error body for GET requests to $incorrectHashUri with valid credentials" in {
+    s"4. Return Forbidden error with right error body for GET requests to $uri with other role credentials" in {
+
+      Get(uri) ~>
+        addCredentials(validMetricCredentials) ~>
+        Route.seal(routes) ~> check {
+
+        status shouldEqual StatusCodes.Forbidden
+        responseAs[String] shouldEqual invalidRole + ClientRole.role
+      }
+    }
+
+    s"5. Return OK code with right error body for GET requests to $incorrectHashUri with valid credentials" in {
 
       Get(incorrectHashUri) ~>
-        addCredentials(validCredentials) ~>
+        addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
         status shouldEqual StatusCodes.OK
@@ -63,10 +75,10 @@ class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest wi
       }
     }
 
-    s"5. Return OK code with right error body for GET requests to $absentHashUri with valid credentials" in {
+    s"6. Return OK code with right error body for GET requests to $absentHashUri with valid credentials" in {
 
       Get(absentHashUri) ~>
-        addCredentials(validCredentials) ~>
+        addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
         status shouldEqual StatusCodes.OK
@@ -74,10 +86,10 @@ class XmlGetMsisdnTest extends WordSpec with Matchers with ScalatestRouteTest wi
       }
     }
 
-    s"6. Return OK code with right body for GET requests to $uri with valid credentials" in {
+    s"7. Return OK code with right body for GET requests to $uri with valid credentials" in {
 
       Get(uri) ~>
-        addCredentials(validCredentials) ~>
+        addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
         status shouldEqual StatusCodes.OK

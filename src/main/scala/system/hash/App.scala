@@ -14,8 +14,6 @@ object App extends HttpApp with Routes {
   val system = ActorSystem("hash-system")
   val metric = system.actorOf(MetricController.props, "metric-controller")
 
-  system.scheduler.schedule(0 millisecond, 1000 milliseconds, metric, MetricsReq)
-
   def main(args: Array[String]): Unit = {
 
     withTimer("start load hashes", loadHashes())
@@ -26,4 +24,4 @@ object App extends HttpApp with Routes {
 // todo add DB credentials support
 // todo add test containers for cassandra
 // todo add logging with logstash console
-// todo add prometeus metrics based on actors
+// todo add reload users controller

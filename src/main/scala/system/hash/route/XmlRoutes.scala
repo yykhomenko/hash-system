@@ -3,12 +3,12 @@ package system.hash.route
 import akka.actor.ActorRef
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import com.typesafe.scalalogging.LazyLogging
-import system.hash.actor.MetricController.{IncXmlHashOk, IncXmlMsisdnOk}
-import system.hash.auth.BasicAuthIp
-import system.hash.model.{Responses, Validation}
+import system.hash.actor.MetricController._
+import system.hash.auth.Auth
+import system.hash.model.{Responses, Validation, _}
 import system.hash.repo.HashRepo
 
-trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses with LazyLogging {
+trait XmlRoutes extends HashRepo with Auth with Validation with Responses with LazyLogging {
 
   def metric: ActorRef
 
@@ -19,15 +19,19 @@ trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses
       pathPrefix("anonym") {
 
         path("getMsisdn") {
-          withBasicAuthIp {
+          withAuth(ClientRole) {
             parameters('hash) { hash =>
 
               withHashValidation(hash) {
 
-                case false => XmlMsisdnResp(error = IncorrectHash).resp
+                case false =>
+                  metric ! IncXmlMsisdnError(IncorrectHash)
+                  XmlMsisdnResp(error = IncorrectHash).resp
                 case true =>
                   getMsisdn(hash) match {
-                    case None => XmlMsisdnResp(error = DataNotFound).resp
+                    case None =>
+                      metric ! IncXmlMsisdnError(DataNotFound)
+                      XmlMsisdnResp(error = DataNotFound).resp
                     case Some(m) =>
                       metric ! IncXmlMsisdnOk
                       XmlMsisdnResp(m.toString, Ok).resp
@@ -38,11 +42,12 @@ trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses
 
         } ~
           path("getHash") {
-            withBasicAuthIp {
+            withAuth(ClientRole) {
               parameters('msisdn) { msisdn =>
 
                 withMsisdnValidation(msisdn) {
                   case false =>
+                    metric ! IncXmlHashError(IncorrectMsisdn)
                     XmlHashResp(error = IncorrectMsisdn).resp
                   case true =>
                     metric ! IncXmlHashOk
@@ -59,7 +64,8 @@ trait XmlRoutes extends HashRepo with BasicAuthIp with Validation with Responses
     case t: Throwable =>
       extractUri { uri =>
         logger.error(s"Request to $uri could not be handled normally", t)
-        XmlMsisdnResp(error = InternalError).resp
+        metric ! IncXmlError(InternalHashSysError)
+        XmlMsisdnResp(error = InternalHashSysError).resp
       }
   }
 }
