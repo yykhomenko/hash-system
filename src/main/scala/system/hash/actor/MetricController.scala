@@ -63,7 +63,6 @@ class MetricController extends Actor {
     case IncJsonHashOk    => requestCounter.labels("json_hash_ok").inc()
     case IncJsonMsisdnOk  => requestCounter.labels("json_msisdn_ok").inc()
 
-
     case IncXmlError(error)     => errorCounter.labels("xml_error", error.errorId.toString)
     case IncXmlHashError(error)     => errorCounter.labels("xml_hash_error", error.errorId.toString)
     case IncXmlMsisdnError(error)  => errorCounter.labels("xml_msisdn_error", error.errorId.toString)

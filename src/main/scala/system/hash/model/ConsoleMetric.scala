@@ -18,7 +18,6 @@ trait ConsoleMetric extends LazyLogging {
 
   private def printProgress(available: Int, progress: Long): Unit = {
     val persent = Math.round(progress * 100 / available)
-//    print(s"\r$persent%")
     logger.info(s"$persent%")
   }
   
