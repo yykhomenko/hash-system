@@ -15,7 +15,6 @@ object App extends HttpApp with Routes {
   val metric = system.actorOf(MetricController.props, "metric-controller")
 
   def main(args: Array[String]): Unit = {
-
     withTimer("start load hashes", loadHashes())
     startServer("0.0.0.0", 8080, system)
   }
