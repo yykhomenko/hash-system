@@ -9,8 +9,8 @@ import scala.collection.JavaConverters._
 
 trait DbRepo {
 
-  private val contactPoints = ConfigFactory.load().getStringList("db.contact-points").asScala
-  private val port = ConfigFactory.load().getInt("db.port")
+  private val contactPoints = ConfigFactory.load.getStringList("db.contact-points").asScala
+  private val port = ConfigFactory.load.getInt("db.port")
 
   private val cluster = Cluster.builder()
     .addContactPoints(contactPoints: _*)
