@@ -9,12 +9,16 @@ import scala.collection.JavaConverters._
 
 trait DbRepo {
 
-  private val contactPoints = ConfigFactory.load.getStringList("db.contact-points").asScala
-  private val port = ConfigFactory.load.getInt("db.port")
+  private val conf = ConfigFactory.load
+  private val contactPoints = conf.getStringList("db.contact-points").asScala
+  private val port = conf.getInt("db.port")
+  private val user = conf.getString("db.user")
+  private val password = conf.getString("db.port")
 
   private val cluster = Cluster.builder()
     .addContactPoints(contactPoints: _*)
     .withPort(port)
+    .withCredentials(user, password)
     .build()
 
   private val session = cluster.connect("hash_system")
