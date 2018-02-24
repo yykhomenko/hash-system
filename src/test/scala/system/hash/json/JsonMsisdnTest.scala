@@ -1,6 +1,7 @@
 package system.hash.json
 
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.headers.`WWW-Authenticate`
 import akka.http.scaladsl.server.Route
 import system.hash.Config
@@ -20,7 +21,7 @@ class JsonMsisdnTest extends Config {
       Get(uri) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.Unauthorized
+        status shouldEqual Unauthorized
         responseAs[String] shouldEqual requiresAuth
         header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
       }
@@ -32,7 +33,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(invalidCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.Unauthorized
+        status shouldEqual Unauthorized
         responseAs[String] shouldEqual invalidAuth
         header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
       }
@@ -44,7 +45,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(invalidCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.Unauthorized
+        status shouldEqual Unauthorized
         responseAs[String] shouldEqual invalidAuth
         header[`WWW-Authenticate`].get.challenges.head shouldEqual responseWWWAuthHeader
       }
@@ -56,7 +57,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(validMetricCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.Forbidden
+        status shouldEqual Forbidden
         responseAs[String] shouldEqual invalidRole + ClientRole.role
       }
     }
@@ -67,7 +68,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.BadRequest
+        status shouldEqual BadRequest
         responseAs[String] shouldEqual JsonResp(error = IncorrectHash).body
       }
     }
@@ -78,7 +79,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.NotFound
+        status shouldEqual NotFound
         responseAs[String] shouldEqual ""
       }
     }
@@ -89,7 +90,7 @@ class JsonMsisdnTest extends Config {
         addCredentials(validClientCredentials) ~>
         Route.seal(routes) ~> check {
 
-        status shouldEqual StatusCodes.OK
+        status shouldEqual OK
         responseAs[String] shouldEqual JsonResp(msisdn.toString).body
       }
     }

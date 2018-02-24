@@ -1,6 +1,7 @@
 package system.hash
 
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 
 class CommonRouteTest extends Config {
@@ -17,7 +18,7 @@ class CommonRouteTest extends Config {
     "return MethodNotAllowed error for POST requests to the root path" in {
 
       Post() ~> Route.seal(routes) ~> check {
-        status shouldEqual StatusCodes.MethodNotAllowed
+        status shouldEqual MethodNotAllowed
         responseAs[String] shouldEqual "HTTP method not allowed, supported methods: GET"
       }
     }
@@ -25,7 +26,7 @@ class CommonRouteTest extends Config {
     "return MethodNotAllowed error for PUT requests to the root path" in {
 
       Put() ~> Route.seal(routes) ~> check {
-        status shouldEqual StatusCodes.MethodNotAllowed
+        status shouldEqual MethodNotAllowed
         responseAs[String] shouldEqual "HTTP method not allowed, supported methods: GET"
       }
     }
