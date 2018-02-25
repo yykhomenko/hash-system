@@ -7,7 +7,7 @@ import system.hash.model.dao.{ConfigAccessor, UserAccessor}
 
 import scala.collection.JavaConverters._
 
-trait DbRepo {
+trait CassandraDB {
 
   private val conf = ConfigFactory.load
   private val contactPoints = conf.getStringList("db.contact-points").asScala

@@ -3,18 +3,18 @@ package system.hash.repo
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.{DigestUtils, MessageDigestAlgorithms}
-import system.hash.model.{E164Format, MD5, ConsoleMetric}
+import system.hash.model.{E164Format, Hash, ConsoleMetric}
 
-trait HashRepo extends DbRepo with E164Format with ConsoleMetric with LazyLogging {
+trait HashRepo extends CassandraDB with E164Format with ConsoleMetric with LazyLogging {
 
   private val algorithm = config.getString("algorithm")
   private val salt = config.getString("salt")
 
-  protected val msisdns = collection.concurrent.TrieMap[MD5, Long]()
+  protected val msisdns = collection.concurrent.TrieMap[Hash, Long]()
 
   protected def progressSize: Int = ndcs.size * ndcNums
 
-  def getMsisdn(hash: String): Option[Long] = msisdns.get(MD5(hash))
+  def getMsisdn(hash: String): Option[Long] = msisdns.get(Hash(hash))
 
   def loadHashes(): Unit = {
 
@@ -22,7 +22,7 @@ trait HashRepo extends DbRepo with E164Format with ConsoleMetric with LazyLoggin
 
     def writeHash(msisdn: Long): Unit = {
       val digest = getHash(msisdn.toString)
-      val hash = MD5(digest)
+      val hash = Hash(digest)
       assert(!msisdns.contains(hash),
         "Hashes contains duplicate! Pick up different salt!")
 

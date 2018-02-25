@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpChallenge}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{Matchers, WordSpec}
 import system.hash.actor.MetricController
-import system.hash.model.MD5
+import system.hash.model.Hash
 import system.hash.route.Routes
 
 trait Config extends WordSpec with Matchers with ScalatestRouteTest with Routes {
@@ -29,5 +29,5 @@ trait Config extends WordSpec with Matchers with ScalatestRouteTest with Routes 
   val incorrectHash = "9801ddf0a8ef82313293d7cf3ab5d46ce"
   val absentHash = "4501ddf0a8ef82313293d7cf3ab5d434"
 
-  msisdns(MD5(hash)) = msisdn
+  msisdns(Hash(hash)) = msisdn
 }
