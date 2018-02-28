@@ -28,3 +28,5 @@ object App extends HttpApp with Routes {
 // todo - extract Storage from trait inheritance
 // todo - split storage to config and data
 // todo - write Storage as state actor
+// todo - rewrite json responses with spay-json lib
+// todo - rewrite xml responses with akka-xml lib
