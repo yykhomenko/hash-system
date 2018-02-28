@@ -22,3 +22,7 @@ object App extends HttpApp with Routes {
 
 // todo add logging with logstash console
 // todo add reload users controller
+// todo write load test with Gatling library
+
+// todo need deep refactoring to make loosely coupled app
+// todo  - extract Storage from trait inheritance
