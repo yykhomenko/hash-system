@@ -25,4 +25,6 @@ object App extends HttpApp with Routes {
 // todo write load test with Gatling library
 
 // todo need deep refactoring to make loosely coupled app
-// todo  - extract Storage from trait inheritance
+// todo - extract Storage from trait inheritance
+// todo - split storage to config and data
+// todo - write Storage as state actor
