@@ -33,7 +33,6 @@ lazy val root = (project in file("."))
       "io.prometheus" % "simpleclient_common" % "0.2.0",
       "io.prometheus" % "simpleclient_hotspot" % "0.2.0",
 
-      "junit" % "junit" % "4.12" % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test)
   )

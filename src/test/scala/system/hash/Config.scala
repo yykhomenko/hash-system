@@ -12,6 +12,7 @@ trait Config extends WordSpec with Matchers with ScalatestRouteTest with Routes 
   val metric = system.actorOf(MetricController.props, "metric-controller")
 
   val responseWWWAuthHeader = HttpChallenge("Basic", Some("hash system"), Map("charset" → "UTF-8"))
+  val methodNotAllowed = "HTTP method not allowed, supported methods: GET"
   val requiresAuth = "The resource requires authentication, which was not supplied with the request"
   val invalidAuth = "The supplied authentication is invalid"
   val invalidRole = "You're don't have necessary role: "

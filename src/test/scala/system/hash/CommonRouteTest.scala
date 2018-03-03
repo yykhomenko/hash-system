@@ -18,7 +18,7 @@ class CommonRouteTest extends Config {
 
       Post() ~> Route.seal(routes) ~> check {
         status shouldEqual MethodNotAllowed
-        responseAs[String] shouldEqual "HTTP method not allowed, supported methods: GET"
+        responseAs[String] shouldEqual methodNotAllowed
       }
     }
 
@@ -26,7 +26,7 @@ class CommonRouteTest extends Config {
 
       Put() ~> Route.seal(routes) ~> check {
         status shouldEqual MethodNotAllowed
-        responseAs[String] shouldEqual "HTTP method not allowed, supported methods: GET"
+        responseAs[String] shouldEqual methodNotAllowed
       }
     }
   }
