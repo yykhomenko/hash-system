@@ -1,0 +1,58 @@
+#%RAML 1.0
+title: Hash-system Hash REST API
+version: v1
+protocols: [ HTTP ]
+baseUri: http://hash.system.com/api/{version}
+securitySchemes:
+  basic:
+    description: This API supports Basic Authentication.
+    type: Basic Authentication
+
+/hash/{msisdn}:
+  get:
+    description: Get hash by msisdn
+    responses:
+      200:
+        body:
+          application/json:
+            type: |
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "title": "date when content was sent"
+                  }
+                }
+              }
+            example: |
+              {
+                "value": "8801ddf0a8ef82313293d7cf3ab5d46c"
+              }
+      400:
+        description: Msisdn is incorrect.
+        body:
+          application/json:
+            type: |
+              {
+                "type": "object",
+                "properties": {
+                  "errorId": {
+                    "type": "integer",
+                    "title": "error identifier"
+                  },
+                  "errorMsg": {
+                    "type": "string",
+                    "title": "error message"
+                  }
+                }
+              }
+            example: |
+              {
+                "errorId": 5,
+                "errorMsg": "Incorrect MSISDN format"
+              }
+      401:
+        description: Login and password is not present or incorrect in request.
+      403:
+        description: Ip adress not allowed for this login.

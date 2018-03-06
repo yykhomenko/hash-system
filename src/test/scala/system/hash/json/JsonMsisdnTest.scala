@@ -8,7 +8,7 @@ import system.hash.model.IncorrectHash
 
 class JsonMsisdnTest extends Config {
 
-  val resource = "/api/msisdn"
+  val resource = "/api/v1/msisdn"
   val uri = s"$resource/$hash"
   val incorrectHashUri = s"$resource/$incorrectHash"
   val absentHashUri = s"$resource/$absentHash"

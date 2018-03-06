@@ -13,7 +13,7 @@ trait JsonRoutes extends HashRepo with Auth with Validation with Responses {
 
   def jsonRoutes: Route = get {
 
-    pathPrefix("api") {
+    pathPrefix("api" / "v1") {
 
       path("msisdn" / Segment) { hash =>
         withAuth(ClientRole) {
