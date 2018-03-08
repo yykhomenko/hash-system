@@ -1,5 +1,5 @@
 #%RAML 1.0
-title: Hash-system Hash REST API
+title: Hash-system Msisdn REST API
 version: v1
 protocols: [ HTTP ]
 baseUri: http://hash.system.com/api/{version}
@@ -8,9 +8,9 @@ securitySchemes:
     description: This API supports Basic Authentication.
     type: Basic Authentication
 
-/hash/{msisdn}:
+/msisdn/{hash}:
   get:
-    description: Get hash by msisdn.
+    description: Get msisdn by hash.
     responses:
       200:
         body:
@@ -21,7 +21,7 @@ securitySchemes:
                 "properties": {
                   "value": {
                     "type": "string",
-                    "title": "hash by msisdn"
+                    "title": "msisdn by hash"
                   }
                 }
               }
@@ -30,7 +30,7 @@ securitySchemes:
                 "value": "380672244089"
               }
       400:
-        description: Msisdn is incorrect.
+        description: Hash is incorrect.
         body:
           application/json:
             type: |
@@ -56,3 +56,5 @@ securitySchemes:
         description: Login and password is not present or incorrect in request.
       403:
         description: Ip adress not allowed for this login.
+      404:
+        description: Msisdn by hash not exists.
