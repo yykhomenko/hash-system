@@ -19,14 +19,3 @@ object App extends HttpApp with Routes {
     startServer("0.0.0.0", 8080, system)
   }
 }
-
-// todo add logging with logstash console
-// todo add reload users controller
-// todo write load test with Gatling library
-
-// todo need deep refactoring to make loosely coupled app
-// todo - extract Storage from trait inheritance
-// todo - split storage to config and data
-// todo - write Storage as state actor
-// todo - rewrite json responses with spay-json lib
-// todo - rewrite xml responses with akka-xml lib

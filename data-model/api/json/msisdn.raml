@@ -5,7 +5,6 @@ protocols: [ HTTP ]
 baseUri: http://hash.system.com/api/{version}
 securitySchemes:
   basic:
-    description: This API supports Basic Authentication.
     type: Basic Authentication
 
 /msisdn/{hash}:
@@ -16,42 +15,42 @@ securitySchemes:
         body:
           application/json:
             type: |
-              {
-                "type": "object",
-                "properties": {
-                  "value": {
-                    "type": "string",
-                    "title": "msisdn by hash"
-                  }
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "title": "msisdn by hash"
                 }
               }
+            }
             example: |
-              {
-                "value": "380672244089"
-              }
+            {
+              "value": "380672244089"
+            }
       400:
         description: Hash is incorrect.
         body:
           application/json:
             type: |
-              {
-                "type": "object",
-                "properties": {
-                  "errorId": {
-                    "type": "integer",
-                    "title": "error identifier"
-                  },
-                  "errorMsg": {
-                    "type": "string",
-                    "title": "error message"
-                  }
+            {
+              "type": "object",
+              "properties": {
+                "errorId": {
+                  "type": "integer",
+                  "title": "error identifier"
+                },
+                "errorMsg": {
+                  "type": "string",
+                  "title": "error message"
                 }
               }
+            }
             example: |
-              {
-                "errorId": 5,
-                "errorMsg": "Incorrect MSISDN format"
-              }
+            {
+              "errorId": 5,
+              "errorMsg": "Incorrect MSISDN format"
+            }
       401:
         description: Login and password is not present or incorrect in request.
       403:
