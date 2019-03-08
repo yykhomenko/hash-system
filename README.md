@@ -14,4 +14,4 @@ Results:
 - REST interface for clients;
 - responsive, resilient, elastic and message driven solution.
 
-This service deployed on 2VMs(4cores Xeon e5 2699 per VM, 32GB RAM, 100GB HDD) and has 1 application and 1 DB per node. It stores 150 000 000 hashes in memory. The service handle 270000 HTTP requests per second. It easy to vertical scaling because it uses fully asynchronous model of computing. It also easy to horizontal scaling because builds as independent nodes. When I design that platform I was inspired The Reactive Manifesto.
+This service deployed on 2VMs(4cores Xeon e5 2699 per VM, 32GB RAM, 100GB HDD) and has 1 application and 1 DB per node. It stores 150 000 000 hashes in memory. The service handle 270000 HTTP requests per second. It easy to vertical scaling because it uses fully asynchronous model of computing. It also easy to horizontal scaling because builds as independent nodes. When I design that service I was inspired The Reactive Manifesto.
