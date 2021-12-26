@@ -10,9 +10,8 @@ lazy val root = (project in file("."))
     commonSettings,
 
     name := "hash-system",
-    mainClass := Some("system.hash.App"),
 
-    parallelExecution in ThisBuild := false,
+    Test / parallelExecution := false,
     coverageMinimum := 70,
 
     libraryDependencies ++= Seq(
