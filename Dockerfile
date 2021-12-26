@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11-jre AS packager
 
 ENV SBT_VERSION 1.5.8
 
@@ -10,8 +10,8 @@ COPY . /hash-system
 
 RUN /ops/sbt/bin/sbt stage
 
-FROM openjdk:11
+FROM openjdk:11-jre AS runner
 
 WORKDIR /hash-system
-COPY --from=0 /hash-system/target/universal/stage ./
+COPY --from=packager /hash-system/target/universal/stage ./
 CMD ["./bin/hash-system"]
