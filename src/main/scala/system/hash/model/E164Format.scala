@@ -3,7 +3,7 @@ package system.hash.model
 trait E164Format {
 
   val cc = 380 * 1000000000L
-  val ndcs = List(67, 68, 96, 97, 98).zipWithIndex.toMap
+  val ndcs = List(67).zipWithIndex.toMap
   val ndcNums = 10000000
 
   def toE164(msisdn: Int): Long = cc + msisdn
