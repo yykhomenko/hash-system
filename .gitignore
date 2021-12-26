@@ -22,3 +22,8 @@ activator-sbt-*-shim.sbt
 /.gradle/
 /.idea/
 *.bin
+/.bsp/
+/.metals/
+/.vscode/
+/project/.bloop/
+/project/metals.sbt
