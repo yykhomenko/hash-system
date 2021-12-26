@@ -1,6 +1,6 @@
 package system.hash.repo
 
-import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.{Cluster, SocketOptions}
 import com.datastax.driver.mapping.MappingManager
 import com.typesafe.config.ConfigFactory
 import system.hash.model.dao.{ConfigAccessor, UserAccessor}
@@ -19,6 +19,7 @@ trait CassandraDB {
     .addContactPoints(contactPoints: _*)
     .withPort(port)
     .withCredentials(user, password)
+    .withSocketOptions((new SocketOptions).setConnectTimeoutMillis(60000))
     .build()
 
   private val session = cluster.connect("hash_system")
