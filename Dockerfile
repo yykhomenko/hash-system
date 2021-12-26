@@ -14,4 +14,5 @@ FROM openjdk:11-jre AS runner
 
 WORKDIR /hash-system
 COPY --from=packager /hash-system/target/universal/stage ./
+EXPOSE 8080
 CMD ["./bin/hash-system"]
