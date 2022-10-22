@@ -12,6 +12,8 @@ lazy val root = (project in file("."))
     name := "hash-system",
 
     Test / parallelExecution := false,
+    Compile / doc / sources := Seq.empty,
+    Compile / packageDoc / publishArtifact := false,
     coverageMinimum := 70,
 
     libraryDependencies ++= Seq(

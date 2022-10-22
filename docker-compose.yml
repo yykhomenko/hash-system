@@ -5,6 +5,15 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - "db"
+      db:
+        condition: service_healthy
   db:
     image: "cassandra:latest"
+    hostname: cassandra
+    restart: always
+
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e describe keyspaces" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
